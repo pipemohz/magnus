@@ -6,3 +6,12 @@ azure-functions
 requests
 pydantic
 pytest
+tiktoken
+openai
+pandas
+matplotlib
+plotly
+scipy
+scikit-learn
+numpy
+python-dotenv
