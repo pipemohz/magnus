@@ -1,20 +1,28 @@
 import pandas as pd
 import numpy as np
 import openai
+import os
+
 
 from openai.embeddings_utils import get_embedding, cosine_similarity
+from dotenv import load_dotenv
 
 
 # search through the reviews for a specific product
 def search_text(input_text, n=3, pprint=True):
-    openai.api_key = "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"
+    load_dotenv("ai/config.env")
+    openai.api_key = os.environ.get('OPENAI_API_KEY')
+
+    # embedding model parameters
+    embedding_model = os.environ.get('EMBEDDING_MODEL')
+
     datafile_path = "ai/data/fine_food_reviews_with_embeddings_1k.csv"
 
     df = pd.read_csv(datafile_path)
     df["embedding"] = df.embedding.apply(eval).apply(np.array)
     product_embedding = get_embedding(
         input_text,
-        engine="text-embedding-ada-002"
+        engine=embedding_model
     )
     
     df["similarity"] = df.embedding.apply(lambda x: cosine_similarity(x, product_embedding))

@@ -1,16 +1,23 @@
 import pandas as pd
 import tiktoken
 import openai
+import os
+
+
+from dotenv import load_dotenv
 
 from openai.embeddings_utils import get_embedding
 
+
 def embedding_data():
-    openai.api_key = "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" # or set OPENAI_API_KEY environment variable
+    load_dotenv("ai/config.env")
+    openai.api_key = os.environ.get('OPENAI_API_KEY')
+    #  = "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" # or set OPENAI_API_KEY environment variable
 
     # embedding model parameters
-    embedding_model = "text-embedding-ada-002"
-    embedding_encoding = "cl100k_base"  # this the encoding for text-embedding-ada-002
-    max_tokens = 8000  # the maximum for text-embedding-ada-002 is 8191
+    embedding_model = os.environ.get('EMBEDDING_MODEL')
+    embedding_encoding = os.environ.get('EMBEDDING_ENCODING')  # this the encoding for text-embedding-ada-002
+    max_tokens = int(os.environ.get('MAX_TOKENS'))  # the maximum for text-embedding-ada-002 is 8191
 
     input_datapath = "ai/data/Reviews_2k.csv"  # to save space, we provide a pre-filtered dataset
     df = pd.read_csv(input_datapath, index_col=0)
@@ -33,7 +40,7 @@ def embedding_data():
     len(df)
 
     # This may take a few minutes
-    # df["embedding"] = df.combined.apply(lambda x: get_embedding(x, engine=embedding_model))
+    df["embedding"] = df.combined.apply(lambda x: get_embedding(x, engine=embedding_model))
     df.to_csv("ai/data/fine_food_reviews_with_embeddings_1k.csv")
 
 if __name__ == "__main__":
