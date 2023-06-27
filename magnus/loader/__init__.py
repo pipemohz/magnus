@@ -4,11 +4,17 @@ import logging
 import azure.functions as func
 
 
-def main(mytimer: func.TimerRequest) -> None:
-    utc_timestamp = datetime.datetime.utcnow().replace(
-        tzinfo=datetime.timezone.utc).isoformat()
+def main(loaderTask: func.TimerRequest) -> None:
+    from tasks import LoaderProcess
 
-    if mytimer.past_due:
-        logging.info('The timer is past due!')
+    now = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc).isoformat()
 
-    logging.info('Python timer trigger function ran at %s', utc_timestamp)
+    if loaderTask.past_due:
+        logging.info("The timer is past due!")
+
+    logging.info("Loader task ran at %s", now)
+
+    LoaderProcess().run()
+
+    now = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc).isoformat()
+    logging.info("Loader task finished at %s", now)

@@ -1,0 +1,11 @@
+## Poetry
+# Get a list of virtual environments created with poetry
+poetry env list
+
+# Set venv creation on current project folder
+poetry config virtualenvs.in-project true
+
+# Remove a poetry environment
+poetry env remove <environment_name>
+
+

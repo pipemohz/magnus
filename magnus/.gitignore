@@ -49,3 +49,6 @@ __azurite_db*__.json
 
 # Test scripts
 test_script.py
+docs.txt
+run.py
+one_drive_test.py
