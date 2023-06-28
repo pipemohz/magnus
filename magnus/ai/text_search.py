@@ -11,21 +11,20 @@ from dotenv import load_dotenv
 # search through the reviews for a specific product
 def search_text(input_text, n=3, pprint=True):
     load_dotenv("ai/config.env")
-    openai.api_key = os.environ.get('OPENAI_API_KEY')
+    openai.api_key = os.environ.get("OPENAI_API_KEY")
 
     # embedding model parameters
-    embedding_model = os.environ.get('EMBEDDING_MODEL')
+    embedding_model = os.environ.get("EMBEDDING_MODEL")
 
     datafile_path = "ai/data/fine_food_reviews_with_embeddings_1k.csv"
 
     df = pd.read_csv(datafile_path)
     df["embedding"] = df.embedding.apply(eval).apply(np.array)
-    product_embedding = get_embedding(
-        input_text,
-        engine=embedding_model
+    product_embedding = get_embedding(input_text, engine=embedding_model)
+
+    df["similarity"] = df.embedding.apply(
+        lambda x: cosine_similarity(x, product_embedding)
     )
-    
-    df["similarity"] = df.embedding.apply(lambda x: cosine_similarity(x, product_embedding))
 
     results = (
         df.sort_values("similarity", ascending=False)
