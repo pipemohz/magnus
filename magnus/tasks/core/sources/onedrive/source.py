@@ -13,19 +13,22 @@ import msal
 # Environment
 from config.environment import MS_LOGIN_API, MS_GRAPH_API, AZURE_APP
 from tasks.utils import decode_docx, decode_pdf
+from db import cosmos_client
+from uuid import uuid4
 
 
 class OneDriveDS:
     def __init__(self) -> None:
         self.__format = "%Y-%m-%dT%H:%M:%SZ"
         self.__now = datetime.now(pytz.timezone("UTC"))
-        self.__yesterday = self.__now - timedelta(days=7)
+        self.__yesterday = self.__now - timedelta(days=1)
 
     def run(self):
         self.__authenticate()
         items = self.__get_items()
         logging.info(f"items:{len(items)}")
-        self.__download_data(items)
+        records = self.__build_records(items)
+        self.__insert_records(records)
 
     def __authenticate(self):
         authority = f"{MS_LOGIN_API}/{AZURE_APP['TENANT_ID']}"
@@ -60,15 +63,27 @@ class OneDriveDS:
 
         return [item for item in response.json()["value"] if not "folder" in item]
 
-    def __download_data(self, items: list):
+    def __build_records(self, items: list):
+        records = list()
         for i, item in enumerate(items):
             logging.info(f"item {i+1}:")
             try:
-                self.__download_item(item)
+                data = self.__download_item(item)
+                records.append(
+                    {
+                        "id": str(uuid4()),
+                        "web_url": item["webUrl"],
+                        "data": data,
+                        "created_at": item["createdDateTime"],
+                        "updated_at": item["lastModifiedDateTime"],
+                    }
+                )
             except Exception as error:
                 logging.info(
                     f"An error has ocurred on download item {item['id']}: {error}"
                 )
+
+        return records
 
     def __download_item(self, item: dict):
         url = f"{MS_GRAPH_API['URL']}/drives/{MS_GRAPH_API['DRIVE_ID']}/items/{item['id']}/content"
@@ -83,4 +98,7 @@ class OneDriveDS:
         else:
             raise Exception("Not a valid file type.")
 
-        logging.info(text)
+        return text
+
+    def __insert_records(self, records: list[dict]):
+        cosmos_client.insert("curriculums", records)

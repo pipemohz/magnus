@@ -16,4 +16,8 @@ AZURE_APP = {
     "PASSWORD": config("AZ_APP_PASSWORD", None),
 }
 
-COSMOS = {"URI": config("AZ_COSMOS_URI"), "KEY": config("AZ_COSMOS_KEY")}
+COSMOS = {
+    "NAME": config("AZ_COSMOS_NAME"),
+    "URI": config("AZ_COSMOS_URI"),
+    "KEY": config("AZ_COSMOS_KEY"),
+}

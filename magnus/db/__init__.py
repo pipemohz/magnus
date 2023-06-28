@@ -2,6 +2,6 @@
 DB Package
 """
 
-from cosmos import Cosmos
+from db.cosmos import Cosmos
 
 cosmos_client = Cosmos()
