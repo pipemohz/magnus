@@ -4,42 +4,35 @@ import openai
 import os
 
 
+from ast import literal_eval
 from openai.embeddings_utils import get_embedding, cosine_similarity
-from dotenv import load_dotenv
+from config.environment import OPENAI
+from db import cosmos_client
+from db.utils import records_to_dataframe
 
 
 # search through the reviews for a specific product
-def search_text(input_text, n=3, pprint=True):
-    load_dotenv("ai/config.env")
-    openai.api_key = os.environ.get("OPENAI_API_KEY")
+def search_text(input_text, n=10):
+    openai.api_key = OPENAI["KEY"]
 
     # embedding model parameters
-    embedding_model = os.environ.get("EMBEDDING_MODEL")
+    embedding_model = OPENAI["MODEL"]
 
-    datafile_path = "ai/data/fine_food_reviews_with_embeddings_1k.csv"
+    records = cosmos_client.get("curriculums")
 
-    df = pd.read_csv(datafile_path)
-    df["embedding"] = df.embedding.apply(eval).apply(np.array)
-    product_embedding = get_embedding(input_text, engine=embedding_model)
+    if len(records):
+        df = records_to_dataframe(records)
+        df.dropna(subset=["embedding"], inplace=True)
 
-    df["similarity"] = df.embedding.apply(
-        lambda x: cosine_similarity(x, product_embedding)
-    )
+        df["embedding"] = df.embedding.apply(literal_eval).apply(np.array)
+        product_embedding = get_embedding(input_text, engine=embedding_model)
 
-    results = (
-        df.sort_values("similarity", ascending=False)
-        .head(n)
-        .combined.str.replace("Title: ", "")
-        .str.replace("; Content:", ": ")
-    )
-    matchs = df.sort_values("similarity", ascending=False).head(n)
-    print(matchs.combined)
-    if pprint:
-        for r in results:
-            print(r[:400])
-            print()
-    return results
+        df["similarity"] = df.embedding.apply(
+            lambda x: cosine_similarity(x, product_embedding)
+        )
 
-
-# results = search_text(df, "delicious beans", n=3)
-# print(results)
+        results = df[["id", "web_url", "updated_at", "similarity"]].sort_values("similarity", ascending=False).head(n)
+        results = pd.DataFrame.to_json(results, orient="records")
+        return results
+    else:
+        return None

@@ -30,3 +30,12 @@ class Cosmos:
                 enable_cross_partition_query=True
             )
         ]
+    
+    def get_embedding_empty(self, container_name: str):
+        return [
+            item
+            for item in self.database.get_container_client(container_name).query_items(
+                f"SELECT * from {container_name} WHERE {container_name}.embedding=[]",
+                enable_cross_partition_query=True
+            )
+        ]
