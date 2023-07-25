@@ -35,7 +35,7 @@ class Cosmos:
         return [
             item
             for item in self.database.get_container_client(container_name).query_items(
-                f"SELECT * from {container_name} WHERE {container_name}.embedding=[]",
+                f"SELECT * from {container_name} WHERE NOT IS_DEFINED({container_name}.embedding)",
                 enable_cross_partition_query=True
             )
         ]
