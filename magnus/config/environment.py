@@ -21,3 +21,10 @@ COSMOS = {
     "URI": config("AZ_COSMOS_URI"),
     "KEY": config("AZ_COSMOS_KEY"),
 }
+
+OPENAI = {
+    "KEY": config("OPENAI_API_KEY", None),
+    "MODEL": config("EMBEDDING_MODEL", "text-embedding-ada-002"),
+    "ENCODING": config("EMBEDDING_ENCODING", "cl100k_base"),
+    "MAX_TOKENS": config("MAX_TOKENS", 8000, cast=int),
+}
