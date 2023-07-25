@@ -21,12 +21,12 @@ class OneDriveDS:
     def __init__(self) -> None:
         self.__format = "%Y-%m-%dT%H:%M:%SZ"
         self.__now = datetime.now(pytz.timezone("UTC"))
-        self.__yesterday = self.__now - timedelta(days=1)
+        self.__yesterday = self.__now - timedelta(days=5)
 
     def run(self):
         self.__authenticate()
         items = self.__get_items()
-        logging.info(f"items:{len(items)}")
+        logging.info(f"number of items to upload:{len(items)}")
         records = self.__build_records(items)
         self.__insert_records(records)
 
@@ -91,7 +91,7 @@ class OneDriveDS:
         response = requests.get(url, headers=self.__headers)
         response.raise_for_status()
 
-        if "docx" in item["name"]:
+        if any(map(lambda x: x in item["name"], ["docx", "doc"])):
             text = decode_docx(response.content)
         elif "pdf" in item["name"]:
             text = decode_pdf(response.content)
