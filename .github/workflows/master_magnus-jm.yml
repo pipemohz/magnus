@@ -12,7 +12,7 @@ on:
 
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
-  PYTHON_VERSION: '3.10' # set this to the python version to use (supports 3.6, 3.7, 3.8)
+  PYTHON_VERSION: '3.9' # set this to the python version to use (supports 3.6, 3.7, 3.8)
 
 jobs:
   build:
@@ -30,10 +30,14 @@ jobs:
         run: |
           python -m venv venv
           source venv/bin/activate
+        with:
+          context: ./magnus
 
       - name: Install dependencies
         run: pip install -r requirements.txt
-        
+        with:
+          context: ./magnus
+
       # Optional: Add step to run tests here
 
       - name: Upload artifact for deployment job
@@ -41,7 +45,7 @@ jobs:
         with:
           name: python-app
           path: |
-            . 
+            .
             !venv/
 
   deploy:
