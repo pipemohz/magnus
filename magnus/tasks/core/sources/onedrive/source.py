@@ -21,7 +21,7 @@ class OneDriveDS:
     def __init__(self) -> None:
         self.__format = "%Y-%m-%dT%H:%M:%SZ"
         self.__now = datetime.now(pytz.timezone("UTC"))
-        self.__yesterday = self.__now - timedelta(days=5)
+        self.__yesterday = self.__now - timedelta(days=1)
 
     def run(self):
         self.__authenticate()

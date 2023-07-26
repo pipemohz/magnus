@@ -1,7 +1,7 @@
 $(document).ready(function () {
     var counter = 0;
     const ulFilter = document.getElementById("filter-list");
-    const ulResults = document.getElementById("filter-list");
+    const ulResults = document.getElementById("results-table-body");
     const text = document.getElementById("search-text");
     const Url = "/ai/api/search/";
 
@@ -26,20 +26,26 @@ $(document).ready(function () {
             dataType: "json",
             contentType: "application/json",
             type: "POST",
-            success: function (response) {
-                console.log(response)
+            success: function (data) {
+                $("#results-status").text("Search completed.");
+                console.log(data)
+
+                var records = JSON.parse(data['records']);
+
+                console.log(records)
 
                 if (ulResults.hasChildNodes()) {
-                    $("#results-list").empty();
+                    $("#results-table-body").empty();
                 }
 
-                for (key of keywords) {
-                    $("#results-list").append(`<li>${key}</li>`);
+                for (var i = 0; i < records.length; i += 1) {
+                    $("#results-table-body").append(`<tr><td><a href="${records[i]['web_url']}" target="_blank">Perfil ${i + 1}</a></td><td>${records[i]['updated_at']}</td><td>${records[i]['similarity']}</td></tr>`);
                 }
 
             },
             error: function (error) {
                 console.log(`Error ${error}`)
+                $("#results-status").text("An error has ocurred during search_text process");
             }
         })
     });
