@@ -101,4 +101,4 @@ class OneDriveDS:
         return text
 
     def __insert_records(self, records: list[dict]):
-        cosmos_client.insert("curriculums", records)
+        cosmos_client.insert(records)
