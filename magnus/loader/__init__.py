@@ -16,9 +16,9 @@ def main(loaderTask: func.TimerRequest) -> None:
     logging.info("Loader task ran at %s", now)
 
     # Load new data from data sources
-    LoaderProcess().run()
+    # LoaderProcess().run()
     # Tokenize records on CosmosDB by embedding_data function
-    embedding_data()
+    # embedding_data()
 
     now = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc).isoformat()
     logging.info("Loader task finished at %s", now)

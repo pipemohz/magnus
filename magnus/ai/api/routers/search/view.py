@@ -12,7 +12,8 @@ def search(search_schema: SearchSchema):
     Search for profiles by text and keywords.
     """
 
-    results = search_text(search_schema.text)
+    text = ",".join([search_schema.text] + search_schema.keywords)
+    results = search_text(text)
     print("results: ", results)
 
     return {"records": results}
