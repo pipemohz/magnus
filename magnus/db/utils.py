@@ -18,6 +18,8 @@ def update_records(
 
     for record in records:
         _id = record["id"]
-        record["n_tokens"] = int(df.loc[df["id"] == _id, "n_tokens"].iloc[0])
-        record["embedding"] = df.loc[df["id"] == _id, "embedding"].iloc[0]
+        serie = df[["n_tokens", "embedding"]][df["id"]==_id]
+        if len(serie):
+            record["n_tokens"] = int(serie.iloc[0, 0])
+            record["embedding"] = serie.iloc[0, 1]
     return records
