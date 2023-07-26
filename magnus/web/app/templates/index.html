@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="text-center main-banner">
+    <div class="row">
+        <h1 class="main-title">Jugada maestra</h1>
+    </div>
+</div>
+
+<div class="container px-4 py-5 my-5">
+        <div class="mb-3">
+          <h4>Busqueda</h4>
+          <input type="text" class="form-control" id="search-text" aria-describedby="searchHelp">
+          <div id="searchHelp" class="form-text">Escribe el perfil de interes</div>
+          <button type="submit" class="btn btn-primary" id="search-btn">Buscar</button>
+        </div>
+
+        <hr>
+        <div class="sm-3" id="filters">
+          <h4>Filtros</h4>
+          <ul id="filter-list"></ul>
+          <button type="button" class="btn btn-primary" id="add-filter">Agregar filtro</button>
+          <button type="button" class="btn btn-primary" id="remove-filter">Quitar filtro</button>
+        </div>
+</div>
+
+<div class="container px-4 py-5 my-5 text-center" disabled>
+  <h3>Resultados</h3>
+  <table class="table" id="results-table">
+    <thead>
+      <tr>
+        <th scope="col">url</th>
+        <th scope="col">Ultima actualización</th>
+        <th scope="col">Match</th>
+      </tr>
+    </thead>
+    <tbody id="results-table-body">
+    </tbody>
+  </table>
+  <h5 id="results-status"></h5>
+</div>
+
+
+{% endblock %}

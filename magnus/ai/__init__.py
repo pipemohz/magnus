@@ -1,23 +1,9 @@
 import logging
 import azure.functions as func
+from ai.api import create_app
 
 
-from .text_search import search_text
-from .embedding_text import embedding_data
-
-
-def main(req: func.HttpRequest) -> func.HttpResponse:
+def main(req: func.HttpRequest, context: func.Context) -> func.HttpResponse:
     logging.info("AI function processed a request.")
-    input_text = req.params.get("text")
-    if not input_text:
-        try:
-            req_body = req.get_json()
-        except ValueError:
-            pass
-        else:
-            input_text = req_body.get("text")
-
-    embedding_data()
-    results = search_text(input_text, n=3)
-
-    return func.HttpResponse(results, status_code=200)
+    app = create_app()
+    return func.AsgiMiddleware(app).handle(req, context)

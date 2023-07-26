@@ -26,7 +26,7 @@ class OneDriveDS:
     def run(self):
         self.__authenticate()
         items = self.__get_items()
-        logging.info(f"items:{len(items)}")
+        logging.info(f"number of items to upload:{len(items)}")
         records = self.__build_records(items)
         self.__insert_records(records)
 
@@ -91,7 +91,7 @@ class OneDriveDS:
         response = requests.get(url, headers=self.__headers)
         response.raise_for_status()
 
-        if "docx" in item["name"]:
+        if any(map(lambda x: x in item["name"], ["docx", "doc"])):
             text = decode_docx(response.content)
         elif "pdf" in item["name"]:
             text = decode_pdf(response.content)
