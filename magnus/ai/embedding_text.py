@@ -1,10 +1,22 @@
+"""
+Embedding process
+"""
+
+# Python built-in
+import logging
+
+# OpenAI
 import openai
+
+# Tiktoken
 import tiktoken
 
+
+# Project packages
+from ai.requests import requests_to_openAI
 from config.environment import OPENAI
 from db import cosmos_client
 from db.utils import records_to_dataframe, update_records
-from .requests import requests_to_openAI
 
 
 def embedding_data():
@@ -17,47 +29,49 @@ def embedding_data():
     ]  # this the encoding for text-embedding-ada-002
     max_tokens = OPENAI["MAX_TOKENS"]  # the maximum for text-embedding-ada-002 is 8191
 
-    # df = pd.read_csv(input_datapath, index_col=0)
+    records = cosmos_client.get().where("NOT IS_DEFINED(curriculums.embedding)").all()
 
-    records = cosmos_client.get_embedding_empty()
+    logging.info(f"Records without token: {len(records)}")
 
-    if len(records):
-        df = records_to_dataframe(records)
-        df.dropna(subset=["data"], inplace=True)
+    if not records:
+        logging.info("No records to apply embedding.")
+        return
 
-        encoding = tiktoken.get_encoding(embedding_encoding)
+    df = records_to_dataframe(records)
+    df.dropna(subset=["data"], inplace=True)
 
-        # df = df.head(20)
-        # omit reviews that are too long to embed
-        df["n_tokens"] = df.data.apply(lambda x: len(encoding.encode(x)))
-        df = df[df.n_tokens <= max_tokens]  # .tail(top_n)
+    encoding = tiktoken.get_encoding(embedding_encoding)
 
-        batch_size = 30  # 2048
-        list_text = df["data"].to_list()
-        segment_text = [
-            list_text[i : i + batch_size] for i in range(0, len(list_text), batch_size)
-        ]
+    # df = df.head(20)
+    # omit reviews that are too long to embed
+    df["n_tokens"] = df.data.apply(lambda x: len(encoding.encode(x)))
+    df = df[df.n_tokens <= max_tokens]  # .tail(top_n)
 
-        segment_embedding_text = [
-            requests_to_openAI(segment, embedding_model) for segment in segment_text
-        ]
+    batch_size = 30  # 2048
+    list_text = df["data"].to_list()
+    segment_text = [
+        list_text[i : i + batch_size] for i in range(0, len(list_text), batch_size)
+    ]
 
-        embedding_text = []
-        for segment in segment_embedding_text:
-            embedding_text += segment
+    segment_embedding_text = [
+        requests_to_openAI(segment, embedding_model) for segment in segment_text
+    ]
 
-        df["embedding"] = embedding_text
+    embedding_text = []
+    for segment in segment_embedding_text:
+        embedding_text += segment
 
-        # Apply a model to tokenized the data
-        # df["embedding"] = df.data.apply(
-        #     lambda x: get_embedding(x, engine=embedding_model)
-        # )
+    df["embedding"] = embedding_text
 
-        df.dropna(subset=["embedding"], inplace=True)
-        if len(df):
-            records = update_records(records, df)
-            # print(records)
-            cosmos_client.insert(records)
+    # Apply a model to tokenized the data
+    # df["embedding"] = df.data.apply(
+    #     lambda x: get_embedding(x, engine=embedding_model)
+    # )
+
+    df.dropna(subset=["embedding"], inplace=True)
+    if not df.empty:
+        records = update_records(records, df)
+        cosmos_client.insert(records)
 
 
 if __name__ == "__main__":

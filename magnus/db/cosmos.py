@@ -1,17 +1,14 @@
 """
 Cosmos client
 """
-# python built-in
-from datetime import datetime
-
 # Azure cosmos
 from azure.cosmos import CosmosClient
 from azure.cosmos.database import DatabaseProxy
 
-# Environment
+# Project packages
 from config.environment import COSMOS
 
-MAGNUS_CONTAINER = "cvs"
+MAGNUS_CONTAINER = "curriculums"
 
 
 class Cosmos:
@@ -20,37 +17,16 @@ class Cosmos:
         self.database = self.client.get_database_client(COSMOS["NAME"])
 
     def insert(self, records: list[dict], container_name: str = MAGNUS_CONTAINER):
+        from tasks.utils import local_now
+
         container = self.database.get_container_client(container_name)
 
         for record in records:
-            record["updated_at"] = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+            record["updated_at"] = local_now().strftime("%Y-%m-%dT%H:%M:%SZ")
             container.upsert_item(record)
 
     def get(self, container_name: str = MAGNUS_CONTAINER):
-        return [
-            item
-            for item in self.database.get_container_client(container_name).query_items(
-                f"SELECT * from {container_name}", enable_cross_partition_query=True
-            )
-        ]
-
-    def get_records_with_embedding(self, container_name: str = MAGNUS_CONTAINER):
-        return [
-            item
-            for item in self.database.get_container_client(container_name).query_items(
-                f"SELECT * from {container_name} WHERE IS_DEFINED({container_name}.embedding)",
-                enable_cross_partition_query=True,
-            )
-        ]
-
-    def get_embedding_empty(self, container_name: str = MAGNUS_CONTAINER):
-        return [
-            item
-            for item in self.database.get_container_client(container_name).query_items(
-                f"SELECT * from {container_name} WHERE NOT IS_DEFINED({container_name}.embedding)",
-                enable_cross_partition_query=True,
-            )
-        ]
+        return Container(self.database, container_name)
 
 
 class Container:
@@ -72,6 +48,5 @@ class Container:
         return self.all()[0]
 
     def where(self, *exprs):
-        for expr in exprs:
-            self.stmt += expr
+        self.stmt += f"WHERE {' '.join(exprs)}"
         return self

@@ -5,6 +5,7 @@ MS_LOGIN_API = config("MS_LOGIN_API_URL", None)
 MS_GRAPH_API = {
     "URL": config("MS_GRAPH_API_URL", None),
     "DRIVE_ID": config("MS_GRAPH_DRIVE_ID", None),
+    "FOLDER_ID": config("MS_GRAPH_FOLDER_ID", None),
     "SCOPES": config("MS_GRAPH_SCOPES", None, cast=Csv()),
 }
 

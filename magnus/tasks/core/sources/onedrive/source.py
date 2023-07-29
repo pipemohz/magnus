@@ -2,33 +2,33 @@
 One drive data source.
 """
 # Python built-in
-from datetime import datetime, timedelta
+from datetime import timedelta
 import logging
-import pytz
 import requests
 
 # msal
 import msal
 
-# Environment
-from config.environment import MS_LOGIN_API, MS_GRAPH_API, AZURE_APP
-from tasks.utils import decode_docx, decode_pdf
+# Project packages
 from db import cosmos_client
-from uuid import uuid4
+from config.environment import MS_LOGIN_API, MS_GRAPH_API, AZURE_APP
+from tasks.utils import decode_docx, decode_pdf, local_now
 
 
 class OneDriveDS:
     def __init__(self) -> None:
         self.__format = "%Y-%m-%dT%H:%M:%SZ"
-        self.__now = datetime.now(pytz.timezone("UTC"))
-        self.__yesterday = self.__now - timedelta(days=7)
+        self.__now = local_now()
+        self.__yesterday = self.__now - timedelta(days=1)
 
     def run(self):
         self.__authenticate()
         items = self.__get_items()
-        logging.info(f"number of items to upload:{len(items)}")
+        logging.info(f"Number of items to upload:{len(items)}")
         records = self.__build_records(items)
+        logging.info(f"Number of records downloaded:{len(records)}")
         self.__insert_records(records)
+        logging.info(f"Number of records uploaded:{len(records)}")
 
     def __authenticate(self):
         authority = f"{MS_LOGIN_API}/{AZURE_APP['TENANT_ID']}"
@@ -52,9 +52,7 @@ class OneDriveDS:
         self.__headers = {"Authorization": f"Bearer {self.__access_token}"}
 
     def __get_items(self):
-        url = (
-            f"{MS_GRAPH_API['URL']}/drives/{MS_GRAPH_API['DRIVE_ID']}/items/root/delta"
-        )
+        url = f"{MS_GRAPH_API['URL']}/drives/{MS_GRAPH_API['DRIVE_ID']}/items/{MS_GRAPH_API['FOLDER_ID']}/delta"
 
         params = {"token": self.__yesterday.strftime(self.__format)}
 
@@ -67,11 +65,13 @@ class OneDriveDS:
         records = list()
         for i, item in enumerate(items):
             logging.info(f"item {i+1}:")
+            logging.info(f"filename: {item['name']}")
             try:
                 data = self.__download_item(item)
                 records.append(
                     {
-                        "id": str(uuid4()),
+                        "id": item["id"],
+                        "filename": item["name"],
                         "web_url": item["webUrl"],
                         "data": data,
                         "created_at": item["createdDateTime"],

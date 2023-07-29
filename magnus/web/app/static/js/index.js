@@ -31,6 +31,7 @@ $(document).ready(function () {
                 console.log(data)
 
                 var records = JSON.parse(data['records']);
+                var row = "";
 
                 console.log(records)
 
@@ -39,7 +40,19 @@ $(document).ready(function () {
                 }
 
                 for (var i = 0; i < records.length; i += 1) {
-                    $("#results-table-body").append(`<tr><td><a href="${records[i]['web_url']}" target="_blank">Perfil ${i + 1}</a></td><td>${records[i]['updated_at']}</td><td>${records[i]['similarity']}</td></tr>`);
+                    row = `<tr><td><a href="${records[i]['web_url']}" target="_blank">${records[i]['filename']}</a></td><td>${records[i]['updated_at']}</td><td>`;
+
+                    if (records[i]['similarity'] >= Number(0.83)) {
+                        row += "\u2658\u2658\u2658";
+                    } else if (records[i]['similarity'] > Number(0.81) && records[i]['similarity'] < Number(0.83)) {
+                        row += "\u2658\u2658";
+                    } else {
+                        row += "\u2658";
+                    }
+
+                    row += "</td></tr>";
+
+                    $("#results-table-body").append(row);
                 }
 
             },

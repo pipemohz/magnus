@@ -3,7 +3,9 @@ Loader utils.
 """
 
 # Python built-in
+from datetime import datetime
 from io import BytesIO
+import pytz
 
 # pydocx
 from docx import Document
@@ -27,3 +29,7 @@ def decode_pdf(content: bytes) -> str:
     stream = BytesIO(content)
     pdf = PdfReader(stream)
     return "".join(map(lambda page: page.extract_text(), pdf.pages))
+
+
+def local_now() -> datetime:
+    return datetime.now(pytz.timezone("UTC"))
