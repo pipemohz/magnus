@@ -26,6 +26,10 @@ $(document).ready(function () {
         $("#results-status").text("");
         $("#loader-spinner").removeAttr("hidden");
 
+        if (ulResults.hasChildNodes()) {
+            $("#results-cards").empty();
+        }
+
         $.ajax({
             url: Url,
             data: JSON.stringify(data),
@@ -43,9 +47,6 @@ $(document).ready(function () {
                 var updateData = "";
                 console.log(records)
 
-                if (ulResults.hasChildNodes()) {
-                    $("#results-cards").empty();
-                }
 
                 if (records.length === 0) {
                     $("#results-status").text("No se han encontrado canditados adecuados");
@@ -63,7 +64,7 @@ $(document).ready(function () {
                     
                     updateData = records[i]['updated_at'].split("T")[0]
                     card = 
-                    `<a href="${records[i]['web_url']}" target="_blank"><div class="card"><div><h3>${match}</h3></div><div><h4>${records[i]['filename']}</h4></div><div><h6>Última modificación<br><p>${updateData}</p></h6></div></div></a>`;
+                    `<a href="${records[i]['web_url']}" target="_blank"><div class="card"><div><h3>${match}</h3></div><div><h4>${records[i]['filename']}</h4></div><div><p>Última modificación${updateData}</p></div></div></a>`;
                     // row = `<tr><td><a href="${records[i]['web_url']}" target="_blank">${records[i]['filename']}</a></td><td>${records[i]['updated_at']}</td><td>`;
 
                     // row += "</td></tr>";
