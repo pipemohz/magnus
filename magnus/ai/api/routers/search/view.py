@@ -1,5 +1,4 @@
 import logging
-import json
 
 from fastapi.routing import APIRouter
 from ai.api.routers.search.schema import ResultSchema, SearchSchema
@@ -18,5 +17,7 @@ def search(search_schema: SearchSchema):
 
     text = ",".join([search_schema.text] + search_schema.keywords)
     results = search_text(text)
+
+    logging.warning(results)
 
     return {"records": results}

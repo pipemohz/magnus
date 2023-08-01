@@ -51,7 +51,11 @@ def search_text(input_text, n=10):
             lambda x: cosine_similarity(x, product_embedding)
         )
 
-        results = df.sort_values("similarity", ascending=False).head(n)
+        results = (
+            df[["id", "filename", "updated_at", "web_url", "similarity"]]
+            .sort_values("similarity", ascending=False)
+            .head(n)
+        )
         results = pd.DataFrame.to_json(results, orient="records")
 
     except Exception as exception:
