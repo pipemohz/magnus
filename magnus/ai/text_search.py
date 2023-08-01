@@ -52,10 +52,11 @@ def search_text(input_text, n=10):
         )
 
         results = (
-            df[["id", "filename", "updated_at", "web_url", "similarity"]]
+            df[["id", "web_url", "filename", "updated_at", "similarity"]]
             .sort_values("similarity", ascending=False)
             .head(n)
         )
+        results = results[results.similarity >= 0.8]
         results = pd.DataFrame.to_json(results, orient="records")
 
     except Exception as exception:

@@ -4,20 +4,19 @@
 
 <div class="text-center main-banner">
     <div class="row">
+      <div class="col logo">
+          <img src="{{ url_for('static', filename='img/JM_V2.png')}}" alt="" class="logo">
+      </div>
+    <div class="row">
         <h1 class="main-title">Magnus</h1>
     </div>
-    <div class="row">
-      <div class="col logo">
-          <img src="{{ url_for('static', filename='img/JM2.png')}}" alt="" class="logo">
-      </div>
-  </div>
 </div>
 
-<div class="container px-4 py-5 my-5">
+<div class="container px-4 py-2 my-5">
         <div class="mb-3">
           <h4>Busqueda</h4>
-          <input type="text" class="form-control" id="search-text" aria-describedby="searchHelp">
-          <div id="searchHelp" class="form-text">Escribe el perfil de interes</div>
+          <input type="text" class="form-control" id="search-text" aria-describedby="searchHelp" placeholder="Escribe el perfil de interés">
+          <br/>
           <button type="submit" class="btn btn-primary" id="search-btn">Buscar</button>
         </div>
 
@@ -25,24 +24,21 @@
         <div class="sm-3" id="filters">
           <h4>Filtros</h4>
           <ul id="filter-list"></ul>
-          <button type="button" class="btn btn-primary" id="add-filter">Agregar filtro</button>
-          <button type="button" class="btn btn-primary" id="remove-filter">Quitar filtro</button>
+            <button type="button" class="btn btn-primary" id="add-filter">Agregar filtro</button>
+            <button type="button" class="btn btn-primary" id="remove-filter">Quitar filtro</button>
         </div>
 </div>
 
-<div class="container px-4 py-5 my-5 text-center" disabled>
-  <h3>Resultados</h3>
-  <table class="table" id="results-table">
-    <thead>
-      <tr>
-        <th scope="col">url</th>
-        <th scope="col">Ultima actualización</th>
-        <th scope="col">Match</th>
-      </tr>
-    </thead>
-    <tbody id="results-table-body">
-    </tbody>
-  </table>
+<div class="container my-5 text-center" id="loader-spinner" hidden>
+  <figure>
+    <img src="{{ url_for('static', filename='img/Rocket.gif')}}" class="spinner"></figure>
+  </figure>
+</div>
+
+<div class="container px-4 py-4 my-5 text-center" >
+  <h3 id="results-title"></h3>
+  <div class="container custom" id="results-cards"></div>
+
   <h5 id="results-status"></h5>
 </div>
 

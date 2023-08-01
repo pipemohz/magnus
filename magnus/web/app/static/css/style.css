@@ -1,0 +1,87 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+img.logo {
+    width: 33em;
+    height: 100%;
+    padding: 1.5rem;
+}
+img.spinner {
+    width: 5rem;
+}
+
+
+h1.main-title {
+    font-weight: 200;
+    font-size: 6rem;
+    color: rgba(26, 36, 87, 1);
+    font-family: 'Francois One', sans-serif;
+    text-shadow: 0px 1px 2px black, 0px 3px 10px rgba(100,136,35,0.5);
+}
+
+.container.custom{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+a {
+    flex: 30%;
+    flex-grow: 1;
+    flex-shrink: 1;
+    text-decoration: none;
+    display:flex;
+    flex-direction: row;
+    
+}
+
+.card{
+    flex: 30%;
+    margin: 20px 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-shrink: 1;
+    overflow: hidden;
+    background: #f7f7f7;
+    box-shadow: 0px 1px 10px rgba(0,0,0,0.2);
+    transition: all 400ms ease;
+}
+
+.card:hover {
+    box-shadow: 5px 5px 20px rgba(0,0,0,0.4);
+    transform: translateY(-3%);
+}
+
+.card:active{
+    box-shadow: inset 0px 1px 20px rgba(0,0,0,0.4);
+}
+
+.card > div {
+    margin: 0.8rem 0.1rem;
+}
+
+.card > div > h3 {
+    color: rgba(26, 36, 87, 1);
+    font-weight: 600;
+    font-size: 3rem;
+    margin: 1rem;
+}
+.card > div > h4{
+    font-size: calc(1.2rem + 30%);
+    color: rgba(26, 36, 87, 1);;
+}
+
+.card > div > p{
+    font-size: calc(0.8rem + 5%);
+    padding: 0.5rem;
+    color: #111;
+}
+
+
+
