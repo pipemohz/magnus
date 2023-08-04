@@ -4,12 +4,6 @@
     box-sizing: border-box;
 }
 
-
-img.spinner {
-    width: calc(3em + 3vw);
-}
-
-
 h1.main-title {
     margin: auto;
     font-weight: 200;
@@ -17,6 +11,33 @@ h1.main-title {
     color: rgba(26, 36, 87, 1);
     font-family: 'Francois One', sans-serif;
     text-shadow: 0px 1px 2px black, 0px 3px 10px rgba(100,136,35,0.5);
+}
+
+.search-footer {
+    display: flex;
+    align-items: center;
+}
+
+.search-footer button,
+.search-footer p,
+.search-footer input {
+    margin: 5px;
+    width: calc(4em + 2vw); 
+}
+
+#text-footer-left {
+    text-align: right;
+    width: calc(8em + 4vw);
+}
+
+.search-footer input {
+    padding: 5px;
+    width: calc(2em + 1.5vw);
+}
+
+
+img.spinner {
+    width: calc(3em + 3vw);
 }
 
 img.logo {

@@ -16,7 +16,8 @@ def search(search_schema: SearchSchema):
     """
 
     text = ",".join([search_schema.text] + search_schema.keywords)
-    results = search_text(text)
+    n = search_schema.quantity
+    results = search_text(text, n)
 
     logging.warning(results)
 

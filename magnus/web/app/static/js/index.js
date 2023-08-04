@@ -3,6 +3,7 @@ $(document).ready(function () {
     const ulFilter = document.getElementById("filter-list");
     const ulResults = document.getElementById("results-cards");
     const text = document.getElementById("search-text");
+    const quantity = document.getElementById("quantity");
     const Url = "/ai/api/search/";
 
     $('#search-btn').click(function () {
@@ -17,7 +18,8 @@ $(document).ready(function () {
 
         const data = {
             text: text.value,
-            keywords: keywords
+            keywords: keywords,
+            quantity: quantity.value
         }
 
         $("#results-title").text("");
