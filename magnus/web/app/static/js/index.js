@@ -62,7 +62,7 @@ $(document).ready(function () {
 
                     updateData = records[i]['updated_at'].split("T")[0]
                     card =
-                        `<a href="${records[i]['web_url']}" target="_blank"><div class="card"><div><h3>${match}</h3></div><div><h4>${records[i]['filename']}</h4></div><div><p>Última modificación${updateData}</p></div></div></a>`;
+                        `<a href="${records[i]['web_url']}" target="_blank"><div class="card"><div><h3>${match}</h3></div><div><h4>${records[i]['filename']}</h4></div><div><p>Última modificación: ${updateData}</p></div></div></a>`;
                     // row = `<tr><td><a href="${records[i]['web_url']}" target="_blank">${records[i]['filename']}</a></td><td>${records[i]['updated_at']}</td><td>`;
 
                     // row += "</td></tr>";

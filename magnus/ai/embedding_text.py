@@ -72,7 +72,3 @@ def embedding_data():
     if not df.empty:
         records = update_records(records, df)
         cosmos_client.insert(records)
-
-
-if __name__ == "__main__":
-    embedding_data()
