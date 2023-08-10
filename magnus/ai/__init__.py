@@ -6,5 +6,4 @@ from ai.make_abstract import generate_abstract
 
 def main(req: func.HttpRequest, context: func.Context) -> func.HttpResponse:
     logging.info("AI function processed a request.")
-    # generate_abstract()
     return func.AsgiMiddleware(create_app()).handle(req, context)

@@ -7,16 +7,26 @@ from datetime import datetime
 from io import BytesIO
 
 import pytz
-import zipfile, re
+from docx import Document
 import fitz
 
 
 def decode_docx(content: bytes) -> str:
     stream = BytesIO(content)
-    docx = zipfile.ZipFile(stream)
-    text = docx.read('word/document.xml').decode('utf-8')
-    cleaned = re.sub('<(.|\n)*?>','',text)
-    return cleaned
+    # stream = BytesIO(content)
+    docx = Document(stream)
+    full_text = []
+    full_text = [para.text for para in docx.paragraphs]
+
+    for table in docx.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                full_text.append(cell.text)
+    # text = docx.read('word/document.xml').decode('utf-8')
+    # cleaned = re.sub(r'<(.|\n)*?>','',text)
+    text = "\n".join(full_text).replace('\n\n','')
+    return text[:text.find("Condiciones de privacidad")]
+
 
 def decode_pdf(content: bytes) -> str:
     stream = BytesIO(content)

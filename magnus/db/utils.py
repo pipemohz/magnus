@@ -28,4 +28,15 @@ def update_records(
         if len(serie):
             record["n_tokens"] = int(serie.iloc[0, 0])
             record["embedding"] = serie.iloc[0, 1]
+        
+    return records
+
+def add_abstract(
+    records: list[Dict[str, any]], df: pandas.DataFrame
+) -> list[Dict[str, any]]:
+    for record in records:
+        _id = record["id"]
+        serie = df[['abstract']][df["id"] == _id]
+        if len(serie):
+            record["abstract"] = serie.iloc[0, 0]
     return records

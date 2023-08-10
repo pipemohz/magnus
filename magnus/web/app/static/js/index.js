@@ -1,10 +1,12 @@
 $(document).ready(function () {
     var counter = 0;
+    var records;
     const ulFilter = document.getElementById("filter-list");
     const ulResults = document.getElementById("results-cards");
     const text = document.getElementById("search-text");
     const quantity = document.getElementById("quantity");
     const Url = "/ai/api/search/";
+    
 
     $('#search-btn').click(function () {
         var keywords = [];
@@ -39,13 +41,14 @@ $(document).ready(function () {
             success: function (data) {
                 $("#results-title").text("Resultados");
                 $("#results-status").text("Busqueda Completada");
-                console.log(data)
+                records = data['records']
+                console.log(records)
 
-                var records = JSON.parse(data['records']);
+                // records = JSON.parse(data['records']);
                 var card = "";
                 var match = "";
                 var updateData = "";
-                console.log(records)
+                // console.log(records)
 
 
                 if (records.length === 0) {
@@ -63,8 +66,9 @@ $(document).ready(function () {
                     }
 
                     updateData = records[i]['updated_at'].split("T")[0]
-                    card =
-                        `<a href="${records[i]['web_url']}" target="_blank"><div class="card"><div><h3>${match}</h3></div><div><h4>${records[i]['filename']}</h4></div><div><p>Última modificación: ${updateData}</p></div></div></a>`;
+                    card = `<a href="${records[i]['web_url']}" target="_blank"><figure><div class="card"><div><h3>${match}</h3></div><div><h4>${records[i]['filename']}</h4></div><div><p>Última modificación: ${updateData}</p></div></div><div class="abstract"><p>${records[i]['abstract']}</p></div></figure></a>`;
+                    
+                    // `<a href="${records[i]['web_url']}" target="_blank"><div class="card"><div><h3>${match}</h3></div><div><h4>${records[i]['filename']}</h4></div><div><p>Última modificación: ${updateData}</p></div></div></a>`;
                     // row = `<tr><td><a href="${records[i]['web_url']}" target="_blank">${records[i]['filename']}</a></td><td>${records[i]['updated_at']}</td><td>`;
 
                     // row += "</td></tr>";

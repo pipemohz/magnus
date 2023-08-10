@@ -52,12 +52,13 @@ def search_text(input_text, n=10):
         )
 
         results = (
-            df[["id", "web_url", "filename", "updated_at", "similarity"]]
+            df[["id", "web_url", "filename", "updated_at", "similarity", "abstract"]]
             .sort_values("similarity", ascending=False)
             .head(n)
         )
         results = results[results.similarity >= 0.8]
-        results = pd.DataFrame.to_json(results, orient="records")
+        results['abstract'] = results['abstract'].fillna("Resumen no disponible")
+        # results = pd.DataFrame.to_json(results, orient="records")
 
     except Exception as exception:
         logging.error(f"An internal error has ocurred: {exception}")

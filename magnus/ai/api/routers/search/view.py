@@ -1,7 +1,7 @@
 import logging
 
 from fastapi.routing import APIRouter
-from ai.api.routers.search.schema import ResultSchema, SearchSchema
+from ai.api.routers.search.schema import ResultSchema, SearchSchema, RecordSchema
 
 from ai.text_search import search_text
 
@@ -18,7 +18,22 @@ def search(search_schema: SearchSchema):
     text = ",".join([search_schema.text] + search_schema.keywords)
     n = search_schema.quantity
     results = search_text(text, n)
+    records_list = []
 
-    logging.warning(results)
+    for _, row in results.iterrows():
+        record_schema = RecordSchema(
+            id=row['id'],
+            web_url=row['web_url'],
+            updated_at=row['updated_at'],
+            similarity=row['similarity'],
+            filename=row['filename'],
+            abstract=row['abstract']
+        )
+        records_list.append(record_schema)
 
-    return {"records": results}
+    result_schema = ResultSchema(records=records_list)
+
+    # result_schema.records
+    logging.warning(result_schema)
+
+    return result_schema

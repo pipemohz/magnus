@@ -12,6 +12,8 @@ class RecordSchema(BaseModel):
     web_url: str
     updated_at: str
     similarity: float
+    filename: str
+    abstract: str
 
 
 class ResultSchema(BaseModel):

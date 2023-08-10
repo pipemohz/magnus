@@ -49,11 +49,13 @@ img.logo {
 
 .container.custom{
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(23vw,1fr));
-    gap: calc(2em + 2.5vw) calc(1.5em + 1.5vw);
+    grid-template-columns: repeat(auto-fit, minmax(20vw,1fr));
+    gap: calc(2em + 2.5vw) calc(3em + 1vw);
+    align-items: center;
+    justify-content: center;
 }
 
-a {
+a{
     flex-grow: 1;
     flex-shrink: 1;
     text-decoration: none;
@@ -62,8 +64,8 @@ a {
     
 }
 
-.card{
-    flex: 30%;
+a figure .card{
+    flex: 27%;
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -74,17 +76,38 @@ a {
     overflow: hidden;
     background: #f7f7f7;
     box-shadow: 0px 1px 10px rgba(0,0,0,0.2);
-    transition: all 400ms ease;
 }
 
-.card:hover {
+a figure {
+    position:relative;
+}
+
+a figure .abstract{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    transition: all 400ms ease-out;
+    opacity: 0;
+    visibility: hidden;
+    text-align: center;
+}
+a figure:hover > .abstract {
+    opacity: 1;
+    visibility: visible;
+    box-shadow: 5px 5px 20px rgba(0,0,0,0.4);
+    transform: translateY(-3%);
+}
+
+/* .card:hover {
     box-shadow: 5px 5px 20px rgba(0,0,0,0.4);
     transform: translateY(-3%);
 }
 
 .card:active{
     box-shadow: inset 0px 1px 20px rgba(0,0,0,0.4);
-}
+} */
 
 .card > div {
     margin: 0.8rem 0.1rem;

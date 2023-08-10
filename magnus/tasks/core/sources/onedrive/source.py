@@ -19,7 +19,7 @@ class OneDriveDS:
     def __init__(self) -> None:
         self.__format = "%Y-%m-%dT%H:%M:%SZ"
         self.__now = local_now()
-        self.__yesterday = self.__now - timedelta(days=1)
+        self.__yesterday = self.__now - timedelta(days=8)
 
     def run(self):
         self.__authenticate()
