@@ -19,7 +19,7 @@ class OneDriveDS:
     def __init__(self) -> None:
         self.__format = "%Y-%m-%dT%H:%M:%SZ"
         self.__now = local_now()
-        self.__yesterday = self.__now - timedelta(days=8)
+        self.__yesterday = self.__now - timedelta(days=2)
 
     def run(self):
         self.__authenticate()
@@ -55,11 +55,23 @@ class OneDriveDS:
         url = f"{MS_GRAPH_API['URL']}/drives/{MS_GRAPH_API['DRIVE_ID']}/items/{MS_GRAPH_API['FOLDER_ID']}/delta"
 
         params = {"token": self.__yesterday.strftime(self.__format)}
-
         response = requests.get(url, headers=self.__headers, params=params)
         response.raise_for_status()
+        results = []
 
-        return [item for item in response.json()["value"] if not "folder" in item]
+        while True:    
+            data = response.json()
+            __ = [item for item in data["value"] if not "folder" in item]
+            results.extend(__)
+
+            if "@odata.nextLink" in data:
+                url = data["@odata.nextLink"]
+                response = requests.get(url, headers=self.__headers)
+                response.raise_for_status()
+            else:
+                break
+
+        return results
 
     def __build_records(self, items: list):
         records = list()
