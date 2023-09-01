@@ -64,7 +64,7 @@ $(document).ready(function () {
                 // records = JSON.parse(data['records']);
                 // console.log(records)
 
-
+                $("#loader-spinner").attr("hidden", "");
                 if (records.length === 0) {
                     $("#results-status").text("No se han encontrado canditados adecuados");
                     return
@@ -92,8 +92,9 @@ $(document).ready(function () {
                     document.getElementById(idPage).addEventListener("click", renderPagination);
 
                 }
+                
                 document.getElementById("page-1").click();
-                $("#loader-spinner").attr("hidden", "");
+                
             },
             error: function (error) {
                 console.log(`Error ${error}`)
