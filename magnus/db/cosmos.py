@@ -22,7 +22,6 @@ class Cosmos:
         container = self.database.get_container_client(container_name)
 
         for record in records:
-            record["updated_at"] = local_now().strftime("%Y-%m-%dT%H:%M:%SZ")
             container.upsert_item(record)
 
     def get(self, container_name: str = MAGNUS_CONTAINER):

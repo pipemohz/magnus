@@ -10,7 +10,7 @@
         "get",
         "post"
       ],
-      "route": "/web/{*route}"
+      "route": "web/{*route}"
     },
     {
       "type": "http",

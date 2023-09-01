@@ -45,7 +45,7 @@ def embedding_data():
     # df = df.head(20)
     # omit reviews that are too long to embed
     df["n_tokens"] = df.data.apply(lambda x: len(encoding.encode(x)))
-    df = df[df.n_tokens <= max_tokens]  # .tail(top_n)
+    df = df[(df.n_tokens <= max_tokens)&(df.n_tokens > 0)]  # .tail(top_n)
 
     batch_size = 30  # 2048
     list_text = df["data"].to_list()

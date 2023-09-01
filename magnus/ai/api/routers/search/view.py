@@ -3,7 +3,8 @@ import logging
 from fastapi.routing import APIRouter
 from ai.api.routers.search.schema import ResultSchema, SearchSchema, RecordSchema
 
-from ai.text_search import search_text
+from ai.text_search import search_text, search_keywords
+from db import cosmos_client
 
 router = APIRouter()
 
@@ -15,12 +16,28 @@ def search(search_schema: SearchSchema):
     Search for profiles by text and keywords.
     """
 
-    text = ",".join([search_schema.text] + search_schema.keywords)
-    n = search_schema.quantity
-    results = search_text(text, n)
+    records = cosmos_client.get().where("IS_DEFINED(curriculums.embedding)").all()
+
+    # text = ",".join([search_schema.text] + search_schema.keywords)
+    if len(search_schema.keywords):
+        pre_filter = search_keywords(search_schema.keywords, records)
+    else:
+        pre_filter = None
+
+    text = search_schema.text
+    quantity = search_schema.quantity
+    similarity = 0.832
+    df_results = search_text(text, records, quantity, similarity)
+
+    if pre_filter is not None:
+        for _, row in pre_filter.iterrows():
+            matching_row = df_results[df_results['id'] == row['id']]
+            if not matching_row.empty:
+                df_results.loc[matching_row.index, 'similarity'] += row['similarity']
+
     records_list = []
 
-    for _, row in results.iterrows():
+    for _, row in df_results.iterrows():
         record_schema = RecordSchema(
             id=row['id'],
             web_url=row['web_url'],
