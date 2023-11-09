@@ -24,15 +24,15 @@ class Cosmos:
         for record in records:
             container.upsert_item(record)
 
-    def get(self, container_name: str = MAGNUS_CONTAINER):
-        return Container(self.database, container_name)
+    def get(self, query: str="SELECT * FROM", container_name: str = MAGNUS_CONTAINER):
+        return Container(self.database, query, container_name)
 
 
 class Container:
-    def __init__(self, database: DatabaseProxy, container_name: str) -> None:
+    def __init__(self, database: DatabaseProxy, query:str, container_name: str) -> None:
         self.container_name = container_name
         self.container_proxy = database.get_container_client(container_name)
-        self.stmt = f"SELECT * from {self.container_name} "
+        self.stmt = f"{query} {self.container_name} AS container"
 
     def all(self):
         return [

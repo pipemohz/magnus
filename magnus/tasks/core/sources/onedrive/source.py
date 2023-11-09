@@ -39,11 +39,17 @@ class OneDriveDS:
             client_credential=AZURE_APP["CLIENT_SECRET"],
         )
 
-        result = app.acquire_token_by_username_password(
-            scopes=MS_GRAPH_API["SCOPES"],
-            username=AZURE_APP["USERNAME"],
-            password=AZURE_APP["PASSWORD"],
-        )
+        result = app.acquire_token_silent(scopes=MS_GRAPH_API["SCOPES"], account=None)
+
+        if not result:
+            logging.info("No suitable token exists in cache. Let's get a new one from AAD.")
+            result = app.acquire_token_for_client(scopes=MS_GRAPH_API["SCOPES"])
+
+        # result = app.acquire_token_by_username_password(
+        #     scopes=MS_GRAPH_API["SCOPES"],
+        #     username=AZURE_APP["USERNAME"],
+        #     password=AZURE_APP["PASSWORD"],
+        # )
 
         if not result:
             raise Exception("Error on authentication.")
@@ -52,7 +58,8 @@ class OneDriveDS:
         self.__headers = {"Authorization": f"Bearer {self.__access_token}"}
 
     def __get_items(self):
-        url = f"{MS_GRAPH_API['URL']}/drives/{MS_GRAPH_API['DRIVE_ID']}/items/{MS_GRAPH_API['FOLDER_ID']}/delta"
+        # url = f"{MS_GRAPH_API['URL']}/drives/{MS_GRAPH_API['DRIVE_ID']}/items/{MS_GRAPH_API['FOLDER_ID']}/delta"
+        url = f"{MS_GRAPH_API['URL']}/drives/{MS_GRAPH_API['DRIVE_ID']}/items/root/delta"
 
         params = {"token": self.__yesterday.strftime(self.__format)}
         response = requests.get(url, headers=self.__headers, params=params)
@@ -75,7 +82,16 @@ class OneDriveDS:
 
     def __build_records(self, items: list):
         records = list()
+        
+        cosmos_records = cosmos_client.get(query="SELECT container.id FROM").all()
+        cosmos_id_records = [c["id"] for c in cosmos_records]
+        items = [i for i in items if i["id"] in cosmos_id_records]
+
         for i, item in enumerate(items):
+
+            if item.get("name") == None:
+                continue
+            
             logging.info(f"item {i+1}:")
             logging.info(f"filename: {item['name']}")
             try:
