@@ -10,7 +10,7 @@
         "get",
         "post"
       ],
-      "route": "/ai/{*route}"
+      "route": "ai/{*route}"
     },
     {
       "type": "http",
