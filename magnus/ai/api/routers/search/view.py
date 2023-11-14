@@ -11,12 +11,12 @@ router = APIRouter()
 
 # @router.post("/", response_model=ResultSchema, openapi_extra={"summary": "Search profiles."})
 @router.post("/", openapi_extra={"summary": "Search profiles."})
-def search(search_schema: SearchSchema):
+async def search(search_schema: SearchSchema):
     """
     Search for profiles by text and keywords.
     """
 
-    records = cosmos_client.get().where("IS_DEFINED(curriculums.embedding)").all()
+    records = cosmos_client.get().where("IS_DEFINED(container.embedding)").all()
 
     # text = ",".join([search_schema.text] + search_schema.keywords)
     if len(search_schema.keywords):
@@ -31,26 +31,25 @@ def search(search_schema: SearchSchema):
 
     if pre_filter is not None:
         for _, row in pre_filter.iterrows():
-            matching_row = df_results[df_results['id'] == row['id']]
+            matching_row = df_results[df_results["id"] == row["id"]]
             if not matching_row.empty:
-                df_results.loc[matching_row.index, 'similarity'] += row['similarity']
+                df_results.loc[matching_row.index, "similarity"] += row["similarity"]
 
     records_list = []
 
     for _, row in df_results.iterrows():
         record_schema = RecordSchema(
-            id=row['id'],
-            web_url=row['web_url'],
-            updated_at=row['updated_at'],
-            similarity=row['similarity'],
-            filename=row['filename'],
-            abstract=row['abstract']
+            id=row["id"],
+            web_url=row["web_url"],
+            updated_at=row["updated_at"],
+            similarity=row["similarity"],
+            filename=row["filename"],
+            abstract=row["abstract"],
         )
         records_list.append(record_schema)
 
     result_schema = ResultSchema(records=records_list)
 
     # result_schema.records
-    logging.warning(result_schema)
 
     return result_schema

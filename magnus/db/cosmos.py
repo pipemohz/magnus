@@ -8,7 +8,7 @@ from azure.cosmos.database import DatabaseProxy
 # Project packages
 from config.environment import COSMOS
 
-MAGNUS_CONTAINER = "curriculums"
+MAGNUS_CONTAINER = "curriculumsV2"
 
 
 class Cosmos:
@@ -24,15 +24,17 @@ class Cosmos:
         for record in records:
             container.upsert_item(record)
 
-    def get(self, query: str="SELECT * FROM", container_name: str = MAGNUS_CONTAINER):
+    def get(self, query: str = "SELECT * FROM", container_name: str = MAGNUS_CONTAINER):
         return Container(self.database, query, container_name)
 
 
 class Container:
-    def __init__(self, database: DatabaseProxy, query:str, container_name: str) -> None:
+    def __init__(
+        self, database: DatabaseProxy, query: str, container_name: str
+    ) -> None:
         self.container_name = container_name
         self.container_proxy = database.get_container_client(container_name)
-        self.stmt = f"{query} {self.container_name} AS container"
+        self.stmt = f"{query} {self.container_name} AS container "
 
     def all(self):
         return [
